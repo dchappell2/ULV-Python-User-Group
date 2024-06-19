@@ -2,7 +2,7 @@
 # learns to classify output of a binary operator
 # inputs and outputs are all binary (0,1) 
 #
-# this code is a modification of
+# this code was adapted from
 # https://pyimagesearch.com/2021/05/06/implementing-the-perceptron-neural-network-with-python/
 
 import numpy as np
@@ -15,16 +15,32 @@ class Perceptron:
     #   alpha = learning rate (0.1 = default)
     #
     def __init__(self, N, alpha=0.1):
-		# initialize the weight matrix 
-        self.W = np.random.randn(N + 1) / np.sqrt(N)
+	# initialize the weight matrix with random numbers
+        self.W = np.random.randn(N) / np.sqrt(N+1)
+        
+	# initialize the bias with a random number
+        self.b = np.random.randn(1) / np.sqrt(N+1)
         
         # store the learning rate
         self.alpha = alpha
+        
         
     # activation function = step function
     # Returns 1 if x > 0, else returns 0
     def activation(self, x):
         return 1 if x > 0 else 0
+    
+    
+    # predict - evaluate output of network given weights
+    # passed parameters
+    #   x - input values for one training set
+    # take the dot product between the input features and the
+	# weight matrix, add the bias and then pass the value through 
+    # activation function
+    #
+    def predict(self, x):
+        z = np.dot(x, self.W) + self.b
+        return self.activation(z)
     
     
     # train (learning) - adjust weights given training data
@@ -51,8 +67,8 @@ class Perceptron:
                     nmiss = nmiss + 1
                 
 				# update the weight matrix
-                self.W[1:] += -self.alpha * error * x    # input weights
-                self.W[0]  += -self.alpha * error        # bias weight
+                self.W += -self.alpha * error * x    # input weights
+                self.b += -self.alpha * error        # bias 
                 
             print(F"    training epoch {n:2}  # misses = {nmiss}")
             
@@ -60,19 +76,7 @@ class Perceptron:
             if nmiss == 0:
                 break
                                 
-                    
-    # predict - evaluate output of network given weights
-    # passed parameters
-    #   x - input values for one training set
-    # take the dot product between the input features and the
-	# weight matrix, add the bias and then pass the value through 
-    # activation function
-    #
-    def predict(self, x):
-        z = np.dot(x, self.W[1:]) + self.W[0]
-        return self.activation(z)
-    
-    
+            
     
 # function that returns training data based on option
 #
